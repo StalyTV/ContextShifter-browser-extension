@@ -1,0 +1,30 @@
+{
+  "name": "context-browser-extension",
+  "version": "4.0.1",
+  "description": "Browser Extension for TaskSnap",
+  "author": {
+    "name": "Roy Rutishauser",
+    "email": "rutis@ifi.uzh.ch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HASEL-UZH/context-browser-extension.git"
+  },
+  "scripts": {
+    "build": "parcel build src/manifest.json src/background.ts --experimental-scope-hoisting --no-source-maps --public-url ./ --out-dir dist && node -e \"const f='dist/manifest.json',j=JSON.parse(require('fs').readFileSync(f));j.background.service_worker='background.js';require('fs').writeFileSync(f,JSON.stringify(j))\"",
+    "package": "web-ext build --overwrite-dest --source-dir dist",
+    "watch": "parcel watch src/manifest.json --public-url ./",
+    "chrome": "cd dist && web-ext run --browser-console -t chromium",
+    "firefox": "cd dist && web-ext run --browser-console -t firefox-desktop",
+    "sign": "web-ext sign --channel unlisted --source-dir dist --artifacts-dir web-ext-artifacts"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@types/webextension-polyfill": "^0.9.1",
+    "parcel-bundler": "^1.12.5",
+    "parcel-plugin-web-extension": "^1.6.1",
+    "typescript": "^4.7.2",
+    "web-ext": "^6.8.0",
+    "webextension-polyfill": "^0.9.0"
+  }
+}

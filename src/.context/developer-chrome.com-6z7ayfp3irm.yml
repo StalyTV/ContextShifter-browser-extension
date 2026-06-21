@@ -1,0 +1,7 @@
+id: 6z7ayfp3irm
+timestamp: 2022-02-25T20:55:47.671Z
+author: unknown
+path: https://developer.chrome.com/docs/extensions/reference/contextMenus/
+fsScope: background.ts
+granularity: base-granularity
+code: 'browser.contextMenus.create({ title: "Shelve", id: "context-shelve" })'

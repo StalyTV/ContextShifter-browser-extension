@@ -1,0 +1,7 @@
+id: wd6z8314jk
+timestamp: 2022-02-25T21:05:15.428Z
+author: unknown
+path: https://developer.chrome.com/docs/extensions/reference/tabs/#event-onUpdated
+fsScope: background.ts
+granularity: base-granularity
+code: "  const tabs = await browser.tabs.query({})"

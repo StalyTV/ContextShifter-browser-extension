@@ -1,0 +1,11 @@
+{
+  "exclude": ["node_modules"],
+  "include": ["src/**/*"],
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "outDir": "dist",
+    "target": "esnext",
+    "allowSyntheticDefaultImports": true,
+    "strict": true
+ }
+}

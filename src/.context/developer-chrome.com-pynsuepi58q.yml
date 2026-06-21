@@ -1,0 +1,7 @@
+id: pynsuepi58q
+timestamp: 2023-03-04T15:11:54.291Z
+author: royru
+path: https://developer.chrome.com/docs/extensions/reference/tabGroups/#method-update
+fsScope: request-handlers.ts
+granularity: base-granularity
+code: "  // tabGroups"

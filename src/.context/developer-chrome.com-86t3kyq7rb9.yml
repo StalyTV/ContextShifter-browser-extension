@@ -1,0 +1,7 @@
+id: 86t3kyq7rb9
+timestamp: 2023-03-07T10:28:27.533Z
+author: royru
+path: https://developer.chrome.com/docs/extensions/reference/commands/
+fsScope: manifest.json
+granularity: code-granularity
+code: '  "commands": {'
