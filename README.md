@@ -2,10 +2,6 @@
 
 A browser extension for *Code Context*. Runs with Chromium browsers and Firefox. 
 
-## Development 
-1. `npm run watch` to continuously update & build the extension.
-2. `npm run firefox` or `npm run chrome` to spin up a (sandboxed) browser.
-
 ## Beta Testing
 Run `npm install` (first time) and then `npm run build` to build the `dist` folder.
 
@@ -15,6 +11,10 @@ Run `npm install` (first time) and then `npm run build` to build the `dist` fold
 ### Firefox
 Run `npm run package` to create a .zip. The console states where the .zip was created.
 In Firefox, you can temporarily install the packaged .zip using [about:debugging#/runtime/this-firefox](about:debugging#/runtime/this-firefox).
+
+## Development 
+1. `npm run watch` to continuously update & build the extension.
+2. `npm run firefox` or `npm run chrome` to spin up a (sandboxed) browser.
 
 ## Publishing
 
