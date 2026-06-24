@@ -1,3 +1,4 @@
+import browser from "webextension-polyfill"
 import { BrowserEvent, BrowserEventType, ClientEndpoints, ServerEndpoints, WebNavigationDetail, WebNavigationSequenceUpdate } from "./extension-types"
 import { Tabs, Windows } from "webextension-polyfill"
 import { getRuntimeInfo } from "./browser-runtime"
@@ -15,6 +16,57 @@ websockets.forEach((socket) => {
   reconnectIntervals.set(socket.url, null)
   attachEventListeners(socket)
 })
+
+// ---------------------------------------------------------------------------
+// Service-worker keep-alive
+// ---------------------------------------------------------------------------
+// In Manifest V3 the background is a NON-persistent service worker that the
+// browser suspends after a short idle period — which happens quickly when the
+// browser window is unfocused, because no tab/window events fire. Suspension
+// tears down this WebSocket, and the connection is only re-established once some
+// browser event wakes the worker again. That is the "loses the connection after
+// a couple of seconds" symptom.
+//
+// To keep the connection stable we:
+//   1. Reset the worker's idle timer with a periodic extension-API call.
+//   2. Reconnect any dropped socket on that same tick.
+//   3. Use chrome.alarms as a safety net to wake the worker (and re-run this
+//      module, which reconnects) even if it was suspended despite (1).
+const KEEP_ALIVE_MS = 20_000
+
+function ensureConnected() {
+  websockets.forEach((ws, url) => {
+    if (ws.readyState === WebSocket.CLOSED || ws.readyState === WebSocket.CLOSING) {
+      const newWs = new WebSocket(url)
+      websockets.set(url, newWs)
+      attachEventListeners(newWs)
+    }
+  })
+}
+
+let keepAliveHandle: ReturnType<typeof setInterval> | null = null
+function startKeepAlive() {
+  if (keepAliveHandle) return
+  keepAliveHandle = setInterval(() => {
+    // Any extension-API call resets the ~30s service-worker idle timer.
+    browser.runtime.getPlatformInfo().catch(() => {})
+    ensureConnected()
+  }, KEEP_ALIVE_MS)
+}
+
+try {
+  browser.alarms.create("cs-keep-alive", { periodInMinutes: 0.5 })
+  browser.alarms.onAlarm.addListener((alarm) => {
+    if (alarm.name === "cs-keep-alive") {
+      startKeepAlive()
+      ensureConnected()
+    }
+  })
+} catch (e) {
+  console.warn("[code-context] alarms API unavailable", e)
+}
+
+startKeepAlive()
 
 function attachEventListeners(websocket: WebSocket) {
   websocket.addEventListener("error", onerror)
