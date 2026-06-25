@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "ContextShifter",
   "description": "ContextShifter browser companion: streams open tabs and window state to the desktop app.",
-  "version": "4.2.0",
+  "version": "4.2.1",
   "icons": {
     "48": "images/logo_48.png",
     "128": "images/logo_128.png"

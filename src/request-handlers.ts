@@ -7,28 +7,13 @@ import { sendEvent } from "./api"
 
 let openTabsInNewWin = false
 
-function groupTabs(tabIds: number[], title?: string) {
-  // @ts-ignore - this is a chrome-only API
-  if (typeof browser.tabs.group) {
-    // @ts-ignore OTODO: this is a Manifest 2 API with the callback
-    browser.tabs.group({ tabIds }, (groupId) => {
-      if (title) {
-        // @ts-ignore OTODO: doesn't work as it is only a MV3 api
-        // await browser.tabGroups.update(groupId, { title })
-      }
-    })
-  }
-}
-
-export async function handleOpenWebpages({ urls, label }: OpenTabClientRequest) {
-  console.log('[code-context] opening group', urls)
+export async function handleOpenWebpages({ urls }: OpenTabClientRequest) {
+  console.log('[code-context] opening tabs', urls)
   const currentWindow = await getCurrentWindow()
 
   if (!currentWindow || openTabsInNewWin) {
-    // create a new window with the requested tabs
-    const win = await browser.windows.create({ url: urls })
-    const tabIds = win.tabs!.map(tab => tab.id!)
-    groupTabs(tabIds, label)
+    // create a new window with the requested tabs (ungrouped)
+    await browser.windows.create({ url: urls })
     return
   }
 
@@ -38,19 +23,18 @@ export async function handleOpenWebpages({ urls, label }: OpenTabClientRequest) 
   const remainingUrlsToOpen = urls.filter(url => !alreadyOpenedTabs.map(tab => tab.url).includes(url))
 
   const tabIds = alreadyOpenedTabs.map(tab => tab.id!)
-  // open remaining urls
 
+  // open remaining urls as standalone tabs
   for (const url of remainingUrlsToOpen) {
     const tab = await browser.tabs.create({ url, windowId: currentWindow!.id })
     tabIds.push(tab.id!)
   }
 
-  // move already opened tabs to the front
+  // move the task's tabs to the front and focus the last one — but do NOT
+  // group them, so they appear as individual tabs.
   const activeTabId = tabIds[tabIds.length - 1]
   browser.tabs.move(tabIds, { index: -1 })
-  browser.tabs.update(activeTabId, { active: true })
-
-  groupTabs(tabIds, label)
+  if (activeTabId != null) browser.tabs.update(activeTabId, { active: true })
 }
 
 export async function handleCloseTabs(closeRequests: CloseTabClientRequest[]) {
