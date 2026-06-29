@@ -7,7 +7,7 @@ import { getWindows } from "./browser-window"
 import { getLastAccess } from "./last-tab-access"
 
 const websockets: Map<string, WebSocket> = new Map([
-  ["ws://localhost:8084/", new WebSocket("ws://localhost:8084/")],
+  ["ws://localhost:8473/", new WebSocket("ws://localhost:8473/")],
 ])
 
 const reconnectIntervals: Map<string, NodeJS.Timeout | null> = new Map();
